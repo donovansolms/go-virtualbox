@@ -302,41 +302,47 @@ func CreateMachine(name, basefolder string) (*Machine, error) {
 
 // Modify changes the settings of the machine.
 func (m *Machine) Modify() error {
+	// HACK: Updating CPU and Memory only as this call was failing
+	// on linux for an unknown reason. It is for testing only, no need
+	// to fix it now.
 	args := []string{"modifyvm", m.Name,
-		"--firmware", "bios",
-		"--bioslogofadein", "off",
-		"--bioslogofadeout", "off",
-		"--bioslogodisplaytime", "0",
-		"--biosbootmenu", "disabled",
+		/*	"--firmware", "bios",
+			"--bioslogofadein", "off",
+			"--bioslogofadeout", "off",
+			"--bioslogodisplaytime", "0",
+			"--biosbootmenu", "disabled",
 
-		"--ostype", m.OSType,
+			"--ostype", m.OSType,
+		*/
 		"--cpus", fmt.Sprintf("%d", m.CPUs),
 		"--memory", fmt.Sprintf("%d", m.Memory),
-		"--vram", fmt.Sprintf("%d", m.VRAM),
+		/*	"--vram", fmt.Sprintf("%d", m.VRAM),
 
-		"--acpi", m.Flag.Get(F_acpi),
-		"--ioapic", m.Flag.Get(F_ioapic),
-		"--rtcuseutc", m.Flag.Get(F_rtcuseutc),
-		"--cpuhotplug", m.Flag.Get(F_cpuhotplug),
-		"--pae", m.Flag.Get(F_pae),
-		"--longmode", m.Flag.Get(F_longmode),
-		"--synthcpu", m.Flag.Get(F_synthcpu),
-		"--hpet", m.Flag.Get(F_hpet),
-		"--hwvirtex", m.Flag.Get(F_hwvirtex),
-		"--triplefaultreset", m.Flag.Get(F_triplefaultreset),
-		"--nestedpaging", m.Flag.Get(F_nestedpaging),
-		"--largepages", m.Flag.Get(F_largepages),
-		"--vtxvpid", m.Flag.Get(F_vtxvpid),
-		"--vtxux", m.Flag.Get(F_vtxux),
-		"--accelerate3d", m.Flag.Get(F_accelerate3d),
+			"--acpi", m.Flag.Get(F_acpi),
+			"--ioapic", m.Flag.Get(F_ioapic),
+			"--rtcuseutc", m.Flag.Get(F_rtcuseutc),
+			"--cpuhotplug", m.Flag.Get(F_cpuhotplug),
+			"--pae", m.Flag.Get(F_pae),
+			"--longmode", m.Flag.Get(F_longmode),
+			"--synthcpu", m.Flag.Get(F_synthcpu),
+			"--hpet", m.Flag.Get(F_hpet),
+			"--hwvirtex", m.Flag.Get(F_hwvirtex),
+			"--triplefaultreset", m.Flag.Get(F_triplefaultreset),
+			"--nestedpaging", m.Flag.Get(F_nestedpaging),
+			"--largepages", m.Flag.Get(F_largepages),
+			"--vtxvpid", m.Flag.Get(F_vtxvpid),
+			"--vtxux", m.Flag.Get(F_vtxux),
+			"--accelerate3d", m.Flag.Get(F_accelerate3d),
+		*/
 	}
-
-	for i, dev := range m.BootOrder {
-		if i > 3 {
-			break // Only four slots `--boot{1,2,3,4}`. Ignore the rest.
+	/*
+		for i, dev := range m.BootOrder {
+			if i > 3 {
+				break // Only four slots `--boot{1,2,3,4}`. Ignore the rest.
+			}
+			args = append(args, fmt.Sprintf("--boot%d", i+1), dev)
 		}
-		args = append(args, fmt.Sprintf("--boot%d", i+1), dev)
-	}
+	*/
 	if err := vbm(args...); err != nil {
 		return err
 	}
